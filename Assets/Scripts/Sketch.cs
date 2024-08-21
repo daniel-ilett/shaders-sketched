@@ -9,13 +9,11 @@
 
     public class Sketch : ScriptableRendererFeature
     {
-        CopyShadowmapPass shadowmapPass;
         SketchRenderPass sketchPass;
 
         public override void Create()
         {
-            shadowmapPass = new CopyShadowmapPass();
-            sketchPass = new SketchRenderPass(shadowmapPass);
+            sketchPass = new SketchRenderPass();
             name = "Sketch";
         }
 
@@ -36,78 +34,13 @@
             base.Dispose(disposing);
         }
 
-        class CopyShadowmapPass : ScriptableRenderPass
-        {
-            public RTHandle copyShadowmapHandle;
-
-            public CopyShadowmapPass()
-            {
-                profilingSampler = new ProfilingSampler("CopyShadowmap");
-                renderPassEvent = RenderPassEvent.AfterRenderingOpaques;
-
-#if UNITY_6000_0_OR_NEWER
-                requiresIntermediateTexture = true;
-#endif
-            }
-
-            private static RenderTextureDescriptor GetCopyPassDescriptor(RenderTextureDescriptor descriptor)
-            {
-                descriptor.msaaSamples = 1;
-                descriptor.depthBufferBits = (int)DepthBits.None;
-
-                return descriptor;
-            }
-
-            public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
-            {
-                ResetTarget();
-
-                var descriptor = GetCopyPassDescriptor(cameraTextureDescriptor);
-                RenderingUtils.ReAllocateIfNeeded(ref copyShadowmapHandle, descriptor);
-
-                base.Configure(cmd, cameraTextureDescriptor);
-            }
-
-            public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
-            {
-                if (renderingData.cameraData.isPreviewCamera)
-                {
-                    return;
-                }
-
-                var shadowmapTextureID = Shader.PropertyToID("_ScreenSpaceShadowmapTexture");
-                var shadowmapTexture = (RenderTexture) Shader.GetGlobalTexture(shadowmapTextureID);
-
-                CommandBuffer cmd = CommandBufferPool.Get();
-
-                // Blit the shadowmap texture into the new RT.
-                using (new ProfilingScope(cmd, profilingSampler))
-                {
-                    Blit(cmd, shadowmapTexture, copyShadowmapHandle);
-                }
-
-                context.ExecuteCommandBuffer(cmd);
-                cmd.Clear();
-                CommandBufferPool.Release(cmd);
-            }
-
-            public RTHandle GetShadowmapHandle()
-            {
-                return copyShadowmapHandle;
-            }
-        }
-
         class SketchRenderPass : ScriptableRenderPass
         {
             private Material material;
             private RTHandle tempTexHandle;
 
-            private CopyShadowmapPass shadowmapPass;
-
-            public SketchRenderPass(CopyShadowmapPass shadowmapPass)
+            public SketchRenderPass()
             {
-                this.shadowmapPass = shadowmapPass;
-
                 profilingSampler = new ProfilingSampler("Sketch");
                 renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
 
