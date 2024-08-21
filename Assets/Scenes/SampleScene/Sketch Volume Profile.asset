@@ -14,11 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   strength:
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 1
   backgroundColor:
     m_OverrideState: 0
     m_Value: {r: 0, g: 0, b: 0, a: 1}
+  sketchTexture:
+    m_OverrideState: 1
+    m_Value: {fileID: 2800000, guid: b250684b947669e4995226bda80ec454, type: 3}
+    dimension: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0

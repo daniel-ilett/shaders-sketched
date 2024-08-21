@@ -18,9 +18,11 @@
         [Tooltip("Color of the background around the 'screen'.")]
         public ColorParameter backgroundColor = new ColorParameter(Color.black);
 
+        public TextureParameter sketchTexture = new TextureParameter(null);
+
         public bool IsActive()
         {
-            return strength.value > 0.0f && active;
+            return sketchTexture.value != null && active;
         }
 
         public bool IsTileCompatible()

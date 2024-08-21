@@ -144,6 +144,9 @@
                 var descriptor = GetCopyPassDescriptor(cameraTextureDescriptor);
                 RenderingUtils.ReAllocateIfNeeded(ref tempTexHandle, descriptor);
 
+                ConfigureInput(ScriptableRenderPassInput.Depth);
+                ConfigureInput(ScriptableRenderPassInput.Normal);
+
                 base.Configure(cmd, cameraTextureDescriptor);
             }
 
@@ -165,6 +168,7 @@
                 var settings = VolumeManager.instance.stack.GetComponent<SketchSettings>();
                 material.SetColor("_BackgroundColor", settings.backgroundColor.value);
                 material.SetFloat("_Strength", settings.strength.value);
+                material.SetTexture("_SketchTexture", settings.sketchTexture.value);
 
                 var shadowmapTextureID = Shader.PropertyToID("_ScreenSpaceShadowmapTexture");
                 var shadowmapTexture = (RenderTexture)Shader.GetGlobalTexture(shadowmapTextureID);
