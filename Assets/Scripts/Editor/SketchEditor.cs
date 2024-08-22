@@ -18,6 +18,7 @@
         SerializedDataParameter sketchTexture;
         SerializedDataParameter blurAmount;
         SerializedDataParameter sketchThresholds;
+        SerializedDataParameter extendDepthSensitivity;
 
         public override void OnEnable()
         {
@@ -27,6 +28,7 @@
             sketchTexture = Unpack(o.Find(x => x.sketchTexture));
             blurAmount = Unpack(o.Find(x => x.blurAmount));
             sketchThresholds = Unpack(o.Find(x => x.sketchThresholds));
+            extendDepthSensitivity = Unpack(o.Find(x => x.extendDepthSensitivity));
         }
 
         public override void OnInspectorGUI()
@@ -45,6 +47,7 @@
             PropertyField(sketchTexture);
             PropertyField(blurAmount);
             PropertyField(sketchThresholds);
+            PropertyField(extendDepthSensitivity);
         }
 
 #if UNITY_2021_2_OR_NEWER

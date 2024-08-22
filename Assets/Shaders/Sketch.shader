@@ -11,6 +11,7 @@
 		HLSLINCLUDE
 
 		#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+		#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
 		#include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
 
 		#define E 2.71828f
@@ -21,11 +22,21 @@
 
 		uint _KernelSize;
 		float _Spread;
+		float _DepthSensitivity;
 
 		float gaussian(int x) 
 		{
 			float sigmaSqu = _Spread * _Spread;
 			return (1 / sqrt(TWO_PI * sigmaSqu)) * pow(E, -(x * x) / (2 * sigmaSqu));
+		}
+
+		float sampleDepth(float2 uv)
+		{
+#if UNITY_REVERSED_Z
+			return SampleSceneDepth(uv);
+#else
+			return lerp(UNITY_NEAR_CLIP_VALUE, 1, SampleSceneDepth(uv));
+#endif
 		}
 
 		ENDHLSL
@@ -38,7 +49,6 @@
             #pragma vertex Vert
             #pragma fragment frag
 
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareNormalsTexture.hlsl"
 
             TEXTURE2D(_SketchTexture);
@@ -81,11 +91,7 @@
             {
 				float4 col = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, i.texcoord);
 
-#if UNITY_REVERSED_Z
-				float depth = SampleSceneDepth(i.texcoord);
-#else
-				float depth = lerp(UNITY_NEAR_CLIP_VALUE, 1, SampleSceneDepth(i.texcoord));
-#endif
+				float depth = sampleDepth(i.texcoord);
                 float3 worldPos = ComputeWorldSpacePosition(i.texcoord, depth, UNITY_MATRIX_I_VP);
                 float3 worldNormal = normalize(SAMPLE_TEXTURE2D(_CameraNormalsTexture, sampler_LinearClamp, i.texcoord));
 
@@ -115,8 +121,10 @@
 
             float4 frag_horizontal (Varyings i) : SV_Target
 			{
+				float depth = sampleDepth(i.texcoord);
+
 				float3 col = 0.0f;
-				float kernelSum = 0.0f;
+				float kernelSum = 0.001f;
 
 				int upper = ((_KernelSize - 1) / 2);
 				int lower = -upper;
@@ -125,10 +133,16 @@
 
 				for (int x = lower; x <= upper; ++x)
 				{
-					float gauss = gaussian(x);
-					kernelSum += gauss;
 					uv = i.texcoord + float2(_BlitTexture_TexelSize.x * x, 0.0f);
-					col += gauss * SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uv);
+					float newDepth = sampleDepth(uv);
+
+					if(newDepth > 0.01f && abs(depth - newDepth) < _DepthSensitivity)
+					{
+						float gauss = gaussian(x);
+						kernelSum += gauss;
+					
+						col += gauss * SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uv);
+					}
 				}
 
 				col /= kernelSum;
@@ -148,8 +162,10 @@
 
             float4 frag_vertical (Varyings i) : SV_Target
 			{
+				float depth = sampleDepth(i.texcoord);
+
 				float3 col = 0.0f;
-				float kernelSum = 0.0f;
+				float kernelSum = 0.001f;
 
 				int upper = ((_KernelSize - 1) / 2);
 				int lower = -upper;
@@ -158,10 +174,16 @@
 
 				for (int y = lower; y <= upper; ++y)
 				{
-					float gauss = gaussian(y);
-					kernelSum += gauss;
 					uv = i.texcoord + float2(0.0f, _BlitTexture_TexelSize.y * y);
-					col += gauss * SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uv);
+					float newDepth = sampleDepth(uv);
+
+					if(newDepth > 0.01f && abs(depth - newDepth) < _DepthSensitivity)
+					{
+						float gauss = gaussian(y);
+						kernelSum += gauss;
+					
+						col += gauss * SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, uv);
+					}
 				}
 
 				col /= kernelSum;

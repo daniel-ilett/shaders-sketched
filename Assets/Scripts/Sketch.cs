@@ -106,6 +106,7 @@
                 material.SetFloat("_Strength", settings.strength.value);
                 material.SetTexture("_SketchTexture", settings.sketchTexture.value);
                 material.SetVector("_SketchThresholds", settings.sketchThresholds.value);
+                material.SetFloat("_DepthSensitivity", settings.extendDepthSensitivity.value);
 
                 material.SetInt("_KernelSize", settings.blurAmount.value);
                 material.SetFloat("_Spread", settings.blurAmount.value / 7.5f);
@@ -130,7 +131,6 @@
 
 
                     Blit(cmd, cameraTargetHandle, tempTexHandle);
-                    //Blit(cmd, shadowmapTexture, blurShadowmapHandle);
                     Blit(cmd, tempTexHandle, cameraTargetHandle, material, 0);
                 }
 

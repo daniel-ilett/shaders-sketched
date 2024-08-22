@@ -24,6 +24,8 @@
 
         public Vector2Parameter sketchThresholds = new Vector2Parameter(new Vector2(0.0f, 0.1f));
 
+        public ClampedFloatParameter extendDepthSensitivity = new ClampedFloatParameter(0.01f, 0.0001f, 0.05f);
+
         public bool IsActive()
         {
             return sketchTexture.value != null && active;
