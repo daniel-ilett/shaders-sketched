@@ -99,8 +99,9 @@
                 float4 sketchTexture = saturate(triplanarSample(_SketchTexture, sampler_LinearRepeat, rotationMatrix, worldPos, worldNormal, 10.0f));
 
 				rotationMatrix = float2x2(1, 0, 0, 1);
-				sketchTexture += saturate(triplanarSample(_SketchTexture, sampler_LinearRepeat, rotationMatrix, worldPos, worldNormal, 10.0f));
-				sketchTexture = saturate(sketchTexture);
+				float4 sketchTexture2 = saturate(triplanarSample(_SketchTexture, sampler_LinearRepeat, rotationMatrix, worldPos, worldNormal, 10.0f));
+				sketchTexture.rgb = saturate(sketchTexture + sketchTexture2).rgb;
+				sketchTexture.a = max(sketchTexture.a, sketchTexture2.a);
 
 				float shadows = 1.0f - SAMPLE_TEXTURE2D(_ShadowmapTexture, sampler_LinearClamp, i.texcoord).r;
 
