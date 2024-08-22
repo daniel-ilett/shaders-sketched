@@ -19,25 +19,25 @@ MonoBehaviour:
     dimension: 1
   sketchColor:
     m_OverrideState: 1
-    m_Value: {r: 0, g: 0, b: 0, a: 1}
+    m_Value: {r: 0, g: 0, b: 0, a: 0.9019608}
   sketchTiling:
     m_OverrideState: 1
-    m_Value: {x: 1, y: 1}
+    m_Value: {x: 2, y: 2}
   sketchThresholds:
     m_OverrideState: 1
-    m_Value: {x: 0.1, y: 0.5}
+    m_Value: {x: 0.05, y: 0.5}
   crossHatching:
     m_OverrideState: 1
     m_Value: 1
   blurAmount:
     m_OverrideState: 1
-    m_Value: 400
+    m_Value: 200
   blurStepSize:
     m_OverrideState: 1
-    m_Value: 16
+    m_Value: 12
   extendDepthSensitivity:
     m_OverrideState: 1
-    m_Value: 0.002
+    m_Value: 0.0078
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
