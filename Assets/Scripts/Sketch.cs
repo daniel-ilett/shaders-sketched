@@ -102,11 +102,10 @@
 
                 // Set Sketch effect properties.
                 var settings = VolumeManager.instance.stack.GetComponent<SketchSettings>();
-                material.SetColor("_BackgroundColor", settings.backgroundColor.value);
-                material.SetFloat("_Strength", settings.strength.value);
                 material.SetTexture("_SketchTexture", settings.sketchTexture.value);
                 material.SetVector("_SketchThresholds", settings.sketchThresholds.value);
                 material.SetFloat("_DepthSensitivity", settings.extendDepthSensitivity.value);
+                material.SetColor("_SketchColor", settings.sketchColor.value);
 
                 material.SetInt("_KernelSize", settings.blurAmount.value);
                 material.SetFloat("_Spread", settings.blurAmount.value / 7.5f);

@@ -54,6 +54,7 @@
             TEXTURE2D(_SketchTexture);
             TEXTURE2D(_ShadowmapTexture);
 			float2 _SketchThresholds;
+			float4 _SketchColor;
 
             // Based on https://catlikecoding.com/unity/tutorials/advanced-rendering/triplanar-mapping/:
 			float4 triplanarSample(Texture2D tex, SamplerState texSampler, float2x2 rotation, float3 uv, float3 normals, float blend)
@@ -102,6 +103,8 @@
 				float4 sketchTexture2 = saturate(triplanarSample(_SketchTexture, sampler_LinearRepeat, rotationMatrix, worldPos, worldNormal, 10.0f));
 				sketchTexture.rgb = saturate(sketchTexture + sketchTexture2).rgb;
 				sketchTexture.a = max(sketchTexture.a, sketchTexture2.a);
+
+				sketchTexture *= _SketchColor;
 
 				float shadows = 1.0f - SAMPLE_TEXTURE2D(_ShadowmapTexture, sampler_LinearClamp, i.texcoord).r;
 

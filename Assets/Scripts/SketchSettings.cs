@@ -12,19 +12,20 @@
             displayName = "Barrel Distortion";
         }
 
-        [Tooltip("Strength of the distortion. Values above zero cause CRT screen-like distortion; values below zero bulge outwards.")]
-        public ClampedFloatParameter strength = new ClampedFloatParameter(0.0f, 0.0f, 1.0f);
-
-        [Tooltip("Color of the background around the 'screen'.")]
-        public ColorParameter backgroundColor = new ColorParameter(Color.black);
-
+        [Tooltip("Texture to use for the sketch pattern.")]
         public TextureParameter sketchTexture = new TextureParameter(null);
 
-        public IntParameter blurAmount = new IntParameter(1);
+        [Tooltip("Color used to tint the sketch texture.")]
+        public ColorParameter sketchColor = new ColorParameter(Color.black);
 
+        [Tooltip("First value = shadow value where sketches start.\nSecond value = shadow value where sketches are at full opacity.")]
         public Vector2Parameter sketchThresholds = new Vector2Parameter(new Vector2(0.0f, 0.1f));
 
-        public ClampedFloatParameter extendDepthSensitivity = new ClampedFloatParameter(0.01f, 0.0001f, 0.05f);
+        [Tooltip("How strongly the shadow map is blurred. Higher values mean the sketches extend further outside the shadowed regions.")]
+        public IntParameter blurAmount = new IntParameter(1);
+
+        [Tooltip("Sensitivity of the function which prevents sketches appearing improperly on some objects.")]
+        public ClampedFloatParameter extendDepthSensitivity = new ClampedFloatParameter(0.002f, 0.0001f, 0.01f);
 
         public bool IsActive()
         {

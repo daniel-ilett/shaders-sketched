@@ -13,22 +13,20 @@
 #endif
     public class SketchEditor : VolumeComponentEditor
     {
-        SerializedDataParameter strength;
-        SerializedDataParameter backgroundColor;
         SerializedDataParameter sketchTexture;
         SerializedDataParameter blurAmount;
         SerializedDataParameter sketchThresholds;
         SerializedDataParameter extendDepthSensitivity;
+        SerializedDataParameter sketchColor;
 
         public override void OnEnable()
         {
             var o = new PropertyFetcher<SketchSettings>(serializedObject);
-            strength = Unpack(o.Find(x => x.strength));
-            backgroundColor = Unpack(o.Find(x => x.backgroundColor));
             sketchTexture = Unpack(o.Find(x => x.sketchTexture));
             blurAmount = Unpack(o.Find(x => x.blurAmount));
             sketchThresholds = Unpack(o.Find(x => x.sketchThresholds));
             extendDepthSensitivity = Unpack(o.Find(x => x.extendDepthSensitivity));
+            sketchColor = Unpack(o.Find(x => x.sketchColor));
         }
 
         public override void OnInspectorGUI()
@@ -42,12 +40,11 @@
                 }
             }
 
-            PropertyField(strength);
-            PropertyField(backgroundColor);
             PropertyField(sketchTexture);
             PropertyField(blurAmount);
             PropertyField(sketchThresholds);
             PropertyField(extendDepthSensitivity);
+            PropertyField(sketchColor);
         }
 
 #if UNITY_2021_2_OR_NEWER
