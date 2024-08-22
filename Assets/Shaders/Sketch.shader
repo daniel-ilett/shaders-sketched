@@ -46,16 +46,11 @@
 			float2 _SketchThresholds;
 
             // Based on https://catlikecoding.com/unity/tutorials/advanced-rendering/triplanar-mapping/:
-			float4 triplanarSample(Texture2D tex, SamplerState texSampler, float3 uv, float3 normals, float blend)
+			float4 triplanarSample(Texture2D tex, SamplerState texSampler, float2x2 rotation, float3 uv, float3 normals, float blend)
 			{
-				float2x2 rotationMatrix = 
-					float2x2(
-						0, -1,
-						1, 0
-					);
-				float2 uvX = uv.zy;
-				float2 uvY = uv.xz;
-				float2 uvZ = uv.xy;
+				float2 uvX = mul(rotation, uv.zy);
+				float2 uvY = mul(rotation, uv.xz);
+				float2 uvZ = mul(rotation, uv.xy);
 
 				if (normals.x < 0)
 				{
@@ -94,7 +89,12 @@
                 float3 worldPos = ComputeWorldSpacePosition(i.texcoord, depth, UNITY_MATRIX_I_VP);
                 float3 worldNormal = normalize(SAMPLE_TEXTURE2D(_CameraNormalsTexture, sampler_LinearClamp, i.texcoord));
 
-                float4 sketchTexture = saturate(triplanarSample(_SketchTexture, sampler_LinearRepeat, worldPos, worldNormal, 10.0f));
+				float2x2 rotationMatrix = float2x2(0, -1, 1, 0);
+                float4 sketchTexture = saturate(triplanarSample(_SketchTexture, sampler_LinearRepeat, rotationMatrix, worldPos, worldNormal, 10.0f));
+
+				rotationMatrix = float2x2(1, 0, 0, 1);
+				sketchTexture += saturate(triplanarSample(_SketchTexture, sampler_LinearRepeat, rotationMatrix, worldPos, worldNormal, 10.0f));
+				sketchTexture = saturate(sketchTexture);
 
 				float shadows = 1.0f - SAMPLE_TEXTURE2D(_ShadowmapTexture, sampler_LinearClamp, i.texcoord).r;
 
