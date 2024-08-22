@@ -136,7 +136,7 @@
 					uv = i.texcoord + float2(_BlitTexture_TexelSize.x * x, 0.0f);
 					float newDepth = sampleDepth(uv);
 
-					if(newDepth > 0.01f && abs(depth - newDepth) < _DepthSensitivity)
+					if(newDepth > 0.001f && abs(depth - newDepth) < _DepthSensitivity)
 					{
 						float gauss = gaussian(x);
 						kernelSum += gauss;
@@ -177,7 +177,7 @@
 					uv = i.texcoord + float2(0.0f, _BlitTexture_TexelSize.y * y);
 					float newDepth = sampleDepth(uv);
 
-					if(newDepth > 0.01f && abs(depth - newDepth) < _DepthSensitivity)
+					if(newDepth > 0.001f && abs(depth - newDepth) < _DepthSensitivity)
 					{
 						float gauss = gaussian(y);
 						kernelSum += gauss;

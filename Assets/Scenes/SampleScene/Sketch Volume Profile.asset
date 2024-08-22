@@ -29,6 +29,9 @@ MonoBehaviour:
   sketchThresholds:
     m_OverrideState: 1
     m_Value: {x: 0, y: 0.5}
+  extendDepthSensitivity:
+    m_OverrideState: 1
+    m_Value: 0.0057
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
