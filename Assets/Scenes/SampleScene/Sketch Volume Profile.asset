@@ -23,6 +23,12 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: {fileID: 2800000, guid: b250684b947669e4995226bda80ec454, type: 3}
     dimension: 1
+  blurAmount:
+    m_OverrideState: 1
+    m_Value: 80
+  sketchThresholds:
+    m_OverrideState: 1
+    m_Value: {x: 0, y: 0.5}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Sketch
+  m_Name: Sketch 1
   m_Shader: {fileID: -6465566751694194690, guid: ff02d52a7197b9845a27d8a11fa0bbf1,
     type: 3}
   m_Parent: {fileID: 0}
@@ -127,7 +127,7 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Base_Color: {r: 0, g: 1, b: 0.41719317, a: 1}
+    - _Base_Color: {r: 1, g: 0.13482302, b: 0, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Shadow_Thresholds: {r: -0.075, g: 0.2, b: 0, a: 0}

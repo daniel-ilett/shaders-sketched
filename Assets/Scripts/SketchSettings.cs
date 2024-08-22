@@ -20,6 +20,10 @@
 
         public TextureParameter sketchTexture = new TextureParameter(null);
 
+        public IntParameter blurAmount = new IntParameter(1);
+
+        public Vector2Parameter sketchThresholds = new Vector2Parameter(new Vector2(0.0f, 0.1f));
+
         public bool IsActive()
         {
             return sketchTexture.value != null && active;

@@ -23,7 +23,6 @@
 
             if (settings != null && settings.IsActive())
             {
-                //renderer.EnqueuePass(shadowmapPass);
                 renderer.EnqueuePass(sketchPass);
             }
         }
@@ -38,6 +37,8 @@
         {
             private Material material;
             private RTHandle tempTexHandle;
+            private RTHandle shadowmapHandle;
+            private RTHandle blurShadowmapHandle;
 
             public SketchRenderPass()
             {
@@ -76,6 +77,8 @@
 
                 var descriptor = GetCopyPassDescriptor(cameraTextureDescriptor);
                 RenderingUtils.ReAllocateIfNeeded(ref tempTexHandle, descriptor);
+                RenderingUtils.ReAllocateIfNeeded(ref shadowmapHandle, descriptor);
+                RenderingUtils.ReAllocateIfNeeded(ref blurShadowmapHandle, descriptor);
 
                 ConfigureInput(ScriptableRenderPassInput.Depth);
                 ConfigureInput(ScriptableRenderPassInput.Normal);
@@ -102,18 +105,32 @@
                 material.SetColor("_BackgroundColor", settings.backgroundColor.value);
                 material.SetFloat("_Strength", settings.strength.value);
                 material.SetTexture("_SketchTexture", settings.sketchTexture.value);
+                material.SetVector("_SketchThresholds", settings.sketchThresholds.value);
+
+                material.SetInt("_KernelSize", settings.blurAmount.value);
+                material.SetFloat("_Spread", settings.blurAmount.value / 7.5f);
 
                 var shadowmapTextureID = Shader.PropertyToID("_ScreenSpaceShadowmapTexture");
                 var shadowmapTexture = (RenderTexture)Shader.GetGlobalTexture(shadowmapTextureID);
 
-                material.SetTexture("_ShadowmapTexture", shadowmapTexture);
+                material.SetTexture("_ShadowmapTexture", shadowmapHandle);
 
                 RTHandle cameraTargetHandle = renderingData.cameraData.renderer.cameraColorTargetHandle;
 
-                // Perform the Blit operations for the Colorize effect.
+                // Perform the Blit operations for the Sketch effect.
                 using (new ProfilingScope(cmd, profilingSampler))
                 {
+                    // Blur the shadowmap texture.
+                    Blit(cmd, shadowmapTexture, shadowmapHandle);
+                    Blit(cmd, shadowmapHandle, blurShadowmapHandle, material, 1);
+                    Blit(cmd, blurShadowmapHandle, shadowmapHandle, material, 2);
+
+                    //Blit(cmd, shadowmapHandle, cameraTargetHandle);
+
+
+
                     Blit(cmd, cameraTargetHandle, tempTexHandle);
+                    //Blit(cmd, shadowmapTexture, blurShadowmapHandle);
                     Blit(cmd, tempTexHandle, cameraTargetHandle, material, 0);
                 }
 

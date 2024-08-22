@@ -16,6 +16,8 @@
         SerializedDataParameter strength;
         SerializedDataParameter backgroundColor;
         SerializedDataParameter sketchTexture;
+        SerializedDataParameter blurAmount;
+        SerializedDataParameter sketchThresholds;
 
         public override void OnEnable()
         {
@@ -23,6 +25,8 @@
             strength = Unpack(o.Find(x => x.strength));
             backgroundColor = Unpack(o.Find(x => x.backgroundColor));
             sketchTexture = Unpack(o.Find(x => x.sketchTexture));
+            blurAmount = Unpack(o.Find(x => x.blurAmount));
+            sketchThresholds = Unpack(o.Find(x => x.sketchThresholds));
         }
 
         public override void OnInspectorGUI()
@@ -39,6 +43,8 @@
             PropertyField(strength);
             PropertyField(backgroundColor);
             PropertyField(sketchTexture);
+            PropertyField(blurAmount);
+            PropertyField(sketchThresholds);
         }
 
 #if UNITY_2021_2_OR_NEWER
