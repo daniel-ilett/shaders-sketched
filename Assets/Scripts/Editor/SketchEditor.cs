@@ -15,6 +15,7 @@
     {
         SerializedDataParameter sketchTexture;
         SerializedDataParameter blurAmount;
+        SerializedDataParameter blurStepSize;
         SerializedDataParameter sketchThresholds;
         SerializedDataParameter extendDepthSensitivity;
         SerializedDataParameter sketchColor;
@@ -24,6 +25,7 @@
             var o = new PropertyFetcher<SketchSettings>(serializedObject);
             sketchTexture = Unpack(o.Find(x => x.sketchTexture));
             blurAmount = Unpack(o.Find(x => x.blurAmount));
+            blurStepSize = Unpack(o.Find(x => x.blurStepSize));
             sketchThresholds = Unpack(o.Find(x => x.sketchThresholds));
             extendDepthSensitivity = Unpack(o.Find(x => x.extendDepthSensitivity));
             sketchColor = Unpack(o.Find(x => x.sketchColor));
@@ -42,6 +44,7 @@
 
             PropertyField(sketchTexture);
             PropertyField(blurAmount);
+            PropertyField(blurStepSize);
             PropertyField(sketchThresholds);
             PropertyField(extendDepthSensitivity);
             PropertyField(sketchColor);

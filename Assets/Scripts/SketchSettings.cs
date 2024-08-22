@@ -22,7 +22,10 @@
         public Vector2Parameter sketchThresholds = new Vector2Parameter(new Vector2(0.0f, 0.1f));
 
         [Tooltip("How strongly the shadow map is blurred. Higher values mean the sketches extend further outside the shadowed regions.")]
-        public IntParameter blurAmount = new IntParameter(1);
+        public ClampedIntParameter blurAmount = new ClampedIntParameter(3, 3, 500);
+
+        [Tooltip("Higher values will skip pixels during blur passes. Increase for better performance.")]
+        public ClampedIntParameter blurStepSize = new ClampedIntParameter(1, 1, 16);
 
         [Tooltip("Sensitivity of the function which prevents sketches appearing improperly on some objects.")]
         public ClampedFloatParameter extendDepthSensitivity = new ClampedFloatParameter(0.002f, 0.0001f, 0.01f);

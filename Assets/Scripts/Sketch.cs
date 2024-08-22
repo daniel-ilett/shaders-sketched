@@ -109,6 +109,7 @@
 
                 material.SetInt("_KernelSize", settings.blurAmount.value);
                 material.SetFloat("_Spread", settings.blurAmount.value / 7.5f);
+                material.SetInt("_BlurStepSize", settings.blurStepSize.value);
 
                 var shadowmapTextureID = Shader.PropertyToID("_ScreenSpaceShadowmapTexture");
                 var shadowmapTexture = (RenderTexture)Shader.GetGlobalTexture(shadowmapTextureID);
@@ -120,15 +121,17 @@
                 // Perform the Blit operations for the Sketch effect.
                 using (new ProfilingScope(cmd, profilingSampler))
                 {
-                    // Blur the shadowmap texture.
-                    Blit(cmd, shadowmapTexture, shadowmapHandle);
-                    Blit(cmd, shadowmapHandle, blurShadowmapHandle, material, 1);
-                    Blit(cmd, blurShadowmapHandle, shadowmapHandle, material, 2);
+                    if(settings.blurAmount.value > 3)
+                    {
+                        // Blur the shadowmap texture.
+                        Blit(cmd, shadowmapTexture, shadowmapHandle);
+                        Blit(cmd, shadowmapHandle, blurShadowmapHandle, material, 1);
+                        Blit(cmd, blurShadowmapHandle, shadowmapHandle, material, 2);
 
-                    //Blit(cmd, shadowmapHandle, cameraTargetHandle);
+                        //Blit(cmd, shadowmapHandle, cameraTargetHandle);
+                    }
 
-
-
+                    // Apply the sketch effect to the world.
                     Blit(cmd, cameraTargetHandle, tempTexHandle);
                     Blit(cmd, tempTexHandle, cameraTargetHandle, material, 0);
                 }

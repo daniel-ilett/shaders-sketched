@@ -23,6 +23,7 @@
 		uint _KernelSize;
 		float _Spread;
 		float _DepthSensitivity;
+		int _BlurStepSize;
 
 		float gaussian(int x) 
 		{
@@ -135,7 +136,7 @@
 
 				float2 uv;
 
-				for (int x = lower; x <= upper; ++x)
+				for (int x = lower; x <= upper; x += _BlurStepSize)
 				{
 					uv = i.texcoord + float2(_BlitTexture_TexelSize.x * x, 0.0f);
 					float newDepth = sampleDepth(uv);
@@ -176,7 +177,7 @@
 
 				float2 uv;
 
-				for (int y = lower; y <= upper; ++y)
+				for (int y = lower; y <= upper; y += _BlurStepSize)
 				{
 					uv = i.texcoord + float2(0.0f, _BlitTexture_TexelSize.y * y);
 					float newDepth = sampleDepth(uv);
