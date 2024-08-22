@@ -18,8 +18,14 @@
         [Tooltip("Color used to tint the sketch texture.")]
         public ColorParameter sketchColor = new ColorParameter(Color.black);
 
+        [Tooltip("How much the sketch texture should be tiled in each direction.")]
+        public Vector2Parameter sketchTiling = new Vector2Parameter(Vector2.one);
+
         [Tooltip("First value = shadow value where sketches start.\nSecond value = shadow value where sketches are at full opacity.")]
         public Vector2Parameter sketchThresholds = new Vector2Parameter(new Vector2(0.0f, 0.1f));
+
+        [Tooltip("Controls whether to sample the sketch texture twice.")]
+        public BoolParameter crossHatching = new BoolParameter(false);
 
         [Tooltip("How strongly the shadow map is blurred. Higher values mean the sketches extend further outside the shadowed regions.")]
         public ClampedIntParameter blurAmount = new ClampedIntParameter(3, 3, 500);

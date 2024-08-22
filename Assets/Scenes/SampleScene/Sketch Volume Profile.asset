@@ -13,12 +13,6 @@ MonoBehaviour:
   m_Name: SketchSettings
   m_EditorClassIdentifier: 
   active: 1
-  strength:
-    m_OverrideState: 1
-    m_Value: 1
-  backgroundColor:
-    m_OverrideState: 0
-    m_Value: {r: 0, g: 0, b: 0, a: 1}
   sketchTexture:
     m_OverrideState: 1
     m_Value: {fileID: 2800000, guid: b250684b947669e4995226bda80ec454, type: 3}
@@ -26,12 +20,21 @@ MonoBehaviour:
   sketchColor:
     m_OverrideState: 1
     m_Value: {r: 0, g: 0, b: 0, a: 1}
+  sketchTiling:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1}
   sketchThresholds:
     m_OverrideState: 1
-    m_Value: {x: 0, y: 0.4}
+    m_Value: {x: 0.1, y: 0.5}
+  crossHatching:
+    m_OverrideState: 1
+    m_Value: 1
   blurAmount:
     m_OverrideState: 1
-    m_Value: 65
+    m_Value: 400
+  blurStepSize:
+    m_OverrideState: 1
+    m_Value: 16
   extendDepthSensitivity:
     m_OverrideState: 1
     m_Value: 0.002

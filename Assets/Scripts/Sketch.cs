@@ -103,9 +103,11 @@
                 // Set Sketch effect properties.
                 var settings = VolumeManager.instance.stack.GetComponent<SketchSettings>();
                 material.SetTexture("_SketchTexture", settings.sketchTexture.value);
+                material.SetColor("_SketchColor", settings.sketchColor.value);
+                material.SetVector("_SketchTiling", settings.sketchTiling.value);
                 material.SetVector("_SketchThresholds", settings.sketchThresholds.value);
                 material.SetFloat("_DepthSensitivity", settings.extendDepthSensitivity.value);
-                material.SetColor("_SketchColor", settings.sketchColor.value);
+                material.SetFloat("_CrossHatching", settings.crossHatching.value ? 1 : 0);
 
                 material.SetInt("_KernelSize", settings.blurAmount.value);
                 material.SetFloat("_Spread", settings.blurAmount.value / 7.5f);
@@ -121,15 +123,16 @@
                 // Perform the Blit operations for the Sketch effect.
                 using (new ProfilingScope(cmd, profilingSampler))
                 {
-                    if(settings.blurAmount.value > 3)
+                    Blit(cmd, shadowmapTexture, shadowmapHandle);
+
+                    if (settings.blurAmount.value > settings.blurStepSize.value)
                     {
                         // Blur the shadowmap texture.
-                        Blit(cmd, shadowmapTexture, shadowmapHandle);
                         Blit(cmd, shadowmapHandle, blurShadowmapHandle, material, 1);
                         Blit(cmd, blurShadowmapHandle, shadowmapHandle, material, 2);
 
                         //Blit(cmd, shadowmapHandle, cameraTargetHandle);
-                    }
+                    }  
 
                     // Apply the sketch effect to the world.
                     Blit(cmd, cameraTargetHandle, tempTexHandle);

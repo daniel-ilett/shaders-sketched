@@ -14,21 +14,25 @@
     public class SketchEditor : VolumeComponentEditor
     {
         SerializedDataParameter sketchTexture;
+        SerializedDataParameter sketchColor;
+        SerializedDataParameter sketchTiling;
+        SerializedDataParameter sketchThresholds;
+        SerializedDataParameter crossHatching;
         SerializedDataParameter blurAmount;
         SerializedDataParameter blurStepSize;
-        SerializedDataParameter sketchThresholds;
         SerializedDataParameter extendDepthSensitivity;
-        SerializedDataParameter sketchColor;
 
         public override void OnEnable()
         {
             var o = new PropertyFetcher<SketchSettings>(serializedObject);
             sketchTexture = Unpack(o.Find(x => x.sketchTexture));
+            sketchColor = Unpack(o.Find(x => x.sketchColor));
+            sketchTiling = Unpack(o.Find(x => x.sketchTiling));
+            crossHatching = Unpack(o.Find(x => x.crossHatching));
+            sketchThresholds = Unpack(o.Find(x => x.sketchThresholds));
             blurAmount = Unpack(o.Find(x => x.blurAmount));
             blurStepSize = Unpack(o.Find(x => x.blurStepSize));
-            sketchThresholds = Unpack(o.Find(x => x.sketchThresholds));
             extendDepthSensitivity = Unpack(o.Find(x => x.extendDepthSensitivity));
-            sketchColor = Unpack(o.Find(x => x.sketchColor));
         }
 
         public override void OnInspectorGUI()
@@ -43,11 +47,14 @@
             }
 
             PropertyField(sketchTexture);
+            PropertyField(sketchColor);
+            PropertyField(sketchTiling);
+            PropertyField(sketchThresholds);
+            PropertyField(crossHatching);
             PropertyField(blurAmount);
             PropertyField(blurStepSize);
-            PropertyField(sketchThresholds);
             PropertyField(extendDepthSensitivity);
-            PropertyField(sketchColor);
+            
         }
 
 #if UNITY_2021_2_OR_NEWER

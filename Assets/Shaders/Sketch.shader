@@ -54,15 +54,17 @@
 
             TEXTURE2D(_SketchTexture);
             TEXTURE2D(_ShadowmapTexture);
-			float2 _SketchThresholds;
 			float4 _SketchColor;
+			float2 _SketchThresholds;
+			float2 _SketchTiling;
+			float _CrossHatching;
 
             // Based on https://catlikecoding.com/unity/tutorials/advanced-rendering/triplanar-mapping/:
 			float4 triplanarSample(Texture2D tex, SamplerState texSampler, float2x2 rotation, float3 uv, float3 normals, float blend)
 			{
-				float2 uvX = mul(rotation, uv.zy);
-				float2 uvY = mul(rotation, uv.xz);
-				float2 uvZ = mul(rotation, uv.xy);
+				float2 uvX = mul(rotation, uv.zy * _SketchTiling);
+				float2 uvY = mul(rotation, uv.xz * _SketchTiling);
+				float2 uvZ = mul(rotation, uv.xy * _SketchTiling);
 
 				if (normals.x < 0)
 				{
@@ -100,10 +102,13 @@
 				float2x2 rotationMatrix = float2x2(0, -1, 1, 0);
                 float4 sketchTexture = saturate(triplanarSample(_SketchTexture, sampler_LinearRepeat, rotationMatrix, worldPos, worldNormal, 10.0f));
 
-				rotationMatrix = float2x2(1, 0, 0, 1);
-				float4 sketchTexture2 = saturate(triplanarSample(_SketchTexture, sampler_LinearRepeat, rotationMatrix, worldPos, worldNormal, 10.0f));
-				sketchTexture.rgb = saturate(sketchTexture + sketchTexture2).rgb;
-				sketchTexture.a = max(sketchTexture.a, sketchTexture2.a);
+				if(_CrossHatching > 0.5f)
+				{
+					rotationMatrix = float2x2(1, 0, 0, 1);
+					float4 sketchTexture2 = saturate(triplanarSample(_SketchTexture, sampler_LinearRepeat, rotationMatrix, worldPos, worldNormal, 10.0f));
+					sketchTexture.rgb = saturate(sketchTexture + sketchTexture2).rgb;
+					sketchTexture.a = max(sketchTexture.a, sketchTexture2.a);
+				}
 
 				sketchTexture *= _SketchColor;
 
