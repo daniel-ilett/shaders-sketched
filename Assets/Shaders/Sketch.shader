@@ -23,7 +23,7 @@
 		uint _KernelSize;
 		float _Spread;
 		float _DepthSensitivity;
-		int _BlurStepSize;
+		uint _BlurStepSize;
 
 		float gaussian(int x) 
 		{

@@ -37,8 +37,8 @@
         {
             private Material material;
             private RTHandle tempTexHandle;
-            private RTHandle shadowmapHandle;
-            private RTHandle blurShadowmapHandle;
+            private RTHandle shadowmapHandle1;
+            private RTHandle shadowmapHandle2;
 
             public SketchRenderPass()
             {
@@ -63,22 +63,20 @@
                 material = new Material(shader);
             }
 
-            private static RenderTextureDescriptor GetCopyPassDescriptor(RenderTextureDescriptor descriptor)
-            {
-                descriptor.msaaSamples = 1;
-                descriptor.depthBufferBits = (int)DepthBits.None;
-
-                return descriptor;
-            }
-
             public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
             {
                 ResetTarget();
 
-                var descriptor = GetCopyPassDescriptor(cameraTextureDescriptor);
+                var descriptor = cameraTextureDescriptor;
+                descriptor.msaaSamples = 1;
+                descriptor.depthBufferBits = (int)DepthBits.None;
+
                 RenderingUtils.ReAllocateIfNeeded(ref tempTexHandle, descriptor);
-                RenderingUtils.ReAllocateIfNeeded(ref shadowmapHandle, descriptor);
-                RenderingUtils.ReAllocateIfNeeded(ref blurShadowmapHandle, descriptor);
+
+                descriptor.colorFormat = RenderTextureFormat.R8;
+
+                RenderingUtils.ReAllocateIfNeeded(ref shadowmapHandle1, descriptor);
+                RenderingUtils.ReAllocateIfNeeded(ref shadowmapHandle2, descriptor);
 
                 ConfigureInput(ScriptableRenderPassInput.Depth);
                 ConfigureInput(ScriptableRenderPassInput.Normal);
@@ -110,33 +108,31 @@
                 material.SetFloat("_CrossHatching", settings.crossHatching.value ? 1 : 0);
 
                 material.SetInt("_KernelSize", settings.blurAmount.value);
-                material.SetFloat("_Spread", settings.blurAmount.value / 7.5f);
+                material.SetFloat("_Spread", settings.blurAmount.value / 6.0f);
                 material.SetInt("_BlurStepSize", settings.blurStepSize.value);
-
-                var shadowmapTextureID = Shader.PropertyToID("_ScreenSpaceShadowmapTexture");
-                var shadowmapTexture = (RenderTexture)Shader.GetGlobalTexture(shadowmapTextureID);
-
-                material.SetTexture("_ShadowmapTexture", shadowmapHandle);
-
-                RTHandle cameraTargetHandle = renderingData.cameraData.renderer.cameraColorTargetHandle;
 
                 // Perform the Blit operations for the Sketch effect.
                 using (new ProfilingScope(cmd, profilingSampler))
                 {
-                    Blit(cmd, shadowmapTexture, shadowmapHandle);
+                    var shadowmapTextureID = Shader.PropertyToID("_ScreenSpaceShadowmapTexture");
+                    var shadowmapTexture = (RenderTexture)Shader.GetGlobalTexture(shadowmapTextureID);
 
-                    if (settings.blurAmount.value > settings.blurStepSize.value)
+                    RTHandle cameraTargetHandle = renderingData.cameraData.renderer.cameraColorTargetHandle;
+
+                    Blit(cmd, shadowmapTexture, shadowmapHandle1);
+
+                    if (settings.blurAmount.value > settings.blurStepSize.value * 2)
                     {
                         // Blur the shadowmap texture.
-                        Blit(cmd, shadowmapHandle, blurShadowmapHandle, material, 1);
-                        Blit(cmd, blurShadowmapHandle, shadowmapHandle, material, 2);
+                        Blitter.BlitCameraTexture(cmd, shadowmapHandle1, shadowmapHandle2, material, 1);
+                        Blitter.BlitCameraTexture(cmd, shadowmapHandle2, shadowmapHandle1, material, 2);
+                    }
 
-                        //Blit(cmd, shadowmapHandle, cameraTargetHandle);
-                    }  
+                    material.SetTexture("_ShadowmapTexture", shadowmapHandle1);
 
                     // Apply the sketch effect to the world.
-                    Blit(cmd, cameraTargetHandle, tempTexHandle);
-                    Blit(cmd, tempTexHandle, cameraTargetHandle, material, 0);
+                    Blitter.BlitCameraTexture(cmd, cameraTargetHandle, tempTexHandle);
+                    Blitter.BlitCameraTexture(cmd, tempTexHandle, cameraTargetHandle, material, 0);
                 }
 
                 context.ExecuteCommandBuffer(cmd);
@@ -147,6 +143,8 @@
             public void Dispose()
             {
                 tempTexHandle?.Release();
+                shadowmapHandle1?.Release();
+                shadowmapHandle2?.Release();
             }
 
 #if UNITY_6000_0_OR_NEWER
@@ -171,8 +169,16 @@
             {
                 // Set Sketch effect properties.
                 var settings = VolumeManager.instance.stack.GetComponent<SketchSettings>();
-                material.SetColor("_BackgroundColor", settings.backgroundColor.value);
-                material.SetFloat("_Strength", settings.strength.value);
+                material.SetTexture("_SketchTexture", settings.sketchTexture.value);
+                material.SetColor("_SketchColor", settings.sketchColor.value);
+                material.SetVector("_SketchTiling", settings.sketchTiling.value);
+                material.SetVector("_SketchThresholds", settings.sketchThresholds.value);
+                material.SetFloat("_DepthSensitivity", settings.extendDepthSensitivity.value);
+                material.SetFloat("_CrossHatching", settings.crossHatching.value ? 1 : 0);
+
+                material.SetInt("_KernelSize", settings.blurAmount.value);
+                material.SetFloat("_Spread", settings.blurAmount.value / 6.0f);
+                material.SetInt("_BlurStepSize", settings.blurStepSize.value);
 
                 Blitter.BlitTexture(cmd, source, new Vector4(1, 1, 0, 0), material, 0);
             }

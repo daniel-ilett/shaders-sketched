@@ -9,7 +9,7 @@
     {
         public SketchSettings()
         {
-            displayName = "Barrel Distortion";
+            displayName = "Sketch";
         }
 
         [Tooltip("Texture to use for the sketch pattern.")]
