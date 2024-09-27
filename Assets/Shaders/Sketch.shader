@@ -99,7 +99,7 @@
                 float3 worldPos = ComputeWorldSpacePosition(i.texcoord, depth, UNITY_MATRIX_I_VP);
                 float3 worldNormal = normalize(SAMPLE_TEXTURE2D(_CameraNormalsTexture, sampler_LinearClamp, i.texcoord));
 
-				float2x2 rotationMatrix = float2x2(0, -1, 1, 0);
+				float2x2 rotationMatrix = float2x2(1, 0, 0, 1);
                 float4 sketchTexture = saturate(triplanarSample(_SketchTexture, sampler_LinearRepeat, rotationMatrix, worldPos, worldNormal, 10.0f));
 
 				if(_CrossHatching > 0.5f)
